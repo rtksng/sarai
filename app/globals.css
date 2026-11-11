@@ -1,0 +1,381 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Design tokens
+   Neutrals are tinted toward the brand's deep navy (hue ≈ 262); accents are
+   "corona" blues taken from the eclipse in the Sarai mark.
+   Contrast (on paper): ink 17:1 · ink-2 9.6:1 · ink-3 5.6:1 · ink-faint 3.8:1
+   (ink-faint is reserved for text ≥ 24px).
+   ────────────────────────────────────────────────────────────────────────── */
+@theme inline {
+  --font-sans: var(--font-albert-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme {
+  --color-paper: oklch(0.992 0.003 255);
+  --color-mist: oklch(0.972 0.007 255);
+  --color-cloud: oklch(0.948 0.012 255);
+  --color-line: oklch(0.91 0.012 258);
+  --color-line-strong: oklch(0.84 0.016 260);
+
+  --color-ink: oklch(0.205 0.035 265);
+  --color-ink-2: oklch(0.4 0.03 264);
+  --color-ink-3: oklch(0.52 0.022 262);
+  --color-ink-faint: oklch(0.6 0.02 260);
+
+  --color-night: oklch(0.165 0.03 266);
+  --color-night-2: oklch(0.215 0.035 265);
+
+  --color-corona: oklch(0.56 0.18 256);
+  --color-corona-deep: oklch(0.47 0.17 260);
+  --color-corona-soft: oklch(0.945 0.03 250);
+  --color-glow: oklch(0.84 0.1 232);
+  --color-aqua: oklch(0.87 0.1 200);
+
+  /* Fluid type scale */
+  --text-display: clamp(2.6rem, 1rem + 5vw, 5.5rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.045em;
+  --text-display--font-weight: 300;
+
+  --text-h2: clamp(2.125rem, 1.3rem + 3vw, 4rem);
+  --text-h2--line-height: 1.02;
+  --text-h2--letter-spacing: -0.04em;
+  --text-h2--font-weight: 300;
+
+  --text-h3: clamp(1.25rem, 1.12rem + 0.5vw, 1.5rem);
+  --text-h3--line-height: 1.2;
+  --text-h3--letter-spacing: -0.02em;
+
+  --text-lead: clamp(1.0625rem, 0.98rem + 0.32vw, 1.25rem);
+  --text-lead--line-height: 1.55;
+
+  --text-stat: clamp(3rem, 2.1rem + 3.4vw, 5.25rem);
+  --text-stat--line-height: 0.9;
+  --text-stat--letter-spacing: -0.05em;
+  --text-stat--font-weight: 300;
+
+  --text-benefit: clamp(2.75rem, 0.9rem + 7.4vw, 7.25rem);
+  --text-benefit--line-height: 1;
+  --text-benefit--letter-spacing: -0.05em;
+  --text-benefit--font-weight: 300;
+
+  --text-company: clamp(1.75rem, 1.15rem + 2vw, 2.875rem);
+  --text-company--line-height: 1.05;
+  --text-company--letter-spacing: -0.035em;
+  --text-company--font-weight: 300;
+
+  /* Motion — natural deceleration, no bounce */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    /* Keeps keyboard-focused elements clear of the fixed header (WCAG 2.4.11). */
+    scroll-padding-top: 6rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    /* Albert Sans is applied with the font-sans utility on <body>. */
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: oklch(0.86 0.08 240);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring, var(--color-corona));
+    outline-offset: 3px;
+  }
+
+  /* Programmatic focus targets (sections reached via in-page links). */
+  [tabindex="-1"]:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/* ── Layout helpers ───────────────────────────────────────────────────── */
+@utility shell {
+  width: 100%;
+  max-width: 82.5rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 0.55rem + 2.8vw, 3rem);
+}
+
+@utility grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.22 0 0 0 0 0.3 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ── Skip link ────────────────────────────────────────────────────────── */
+@layer components {
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  translate: 0 -200%;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: 0.75rem 1.25rem;
+  font-weight: 500;
+  transition: translate 0.3s var(--ease-out-expo);
+}
+.skip-link:focus-visible {
+  translate: 0 0;
+}
+}
+
+/* ── Scroll reveal (driven by RevealObserver) ─────────────────────────────
+   Content is visible by default (no-JS, SEO); the observer only hides what is
+   still below the fold, then reveals it on entry. */
+[data-reveal="out"] {
+  opacity: 0;
+  transform: translate3d(0, 1.75rem, 0);
+}
+[data-reveal-variant="fade"][data-reveal="out"] {
+  transform: none;
+}
+[data-reveal="in"] {
+  transition:
+    opacity 0.9s var(--ease-out-quart),
+    transform 1.1s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* ── Hero: sky, eclipse horizon and sparkle ───────────────────────────────
+   The horizon is one radial gradient: a paper-coloured disc (the page itself)
+   rising from below with a corona around its rim — the Sarai eclipse mark at
+   landscape scale. --r is the disc radius and --spark-dx the sparkle's offset
+   from centre (unitless px, so the rim height can be solved with sqrt()). */
+@layer components {
+.hero {
+  --cap: clamp(6.5rem, 20vh, 14rem);
+  --corona: 24rem;
+  --r: 900;
+  --spark-dx: 118;
+}
+@media (min-width: 40rem) {
+  .hero {
+    --r: 1250;
+    --spark-dx: 210;
+  }
+}
+@media (min-width: 64rem) {
+  .hero {
+    --r: 1700;
+    --spark-dx: 330;
+  }
+}
+@media (min-width: 96rem) {
+  .hero {
+    --r: 2200;
+    --spark-dx: 430;
+  }
+}
+
+.hero-sky {
+  background:
+    radial-gradient(60% 50% at 92% 0%, oklch(0.94 0.04 248 / 0.95), transparent 70%),
+    radial-gradient(50% 45% at 0% 28%, oklch(0.965 0.025 215 / 0.9), transparent 70%),
+    linear-gradient(
+      180deg,
+      oklch(0.99 0.004 250) 0%,
+      oklch(0.972 0.013 246) 45%,
+      oklch(0.93 0.038 238) 100%
+    );
+}
+
+.hero-horizon {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -20vh;
+  height: calc(var(--cap) + 20vh + var(--corona));
+  background: radial-gradient(
+    circle at 50% calc(var(--corona) + var(--r) * 1px),
+    var(--color-paper) calc(var(--r) * 1px - 1.5px),
+    oklch(1 0 0) calc(var(--r) * 1px),
+    oklch(0.92 0.07 212 / 0.95) calc(var(--r) * 1px + 3px),
+    oklch(0.8 0.12 236 / 0.55) calc(var(--r) * 1px + 36px),
+    oklch(0.84 0.09 242 / 0.26) calc(var(--r) * 1px + 130px),
+    oklch(0.9 0.05 245 / 0) calc(var(--r) * 1px + 340px)
+  );
+}
+
+.hero-sparkle {
+  position: absolute;
+  left: calc(50% + var(--spark-dx) * 1px);
+  top: calc(var(--corona) + 6px);
+  top: calc(
+    var(--corona) +
+      (var(--r) - sqrt(var(--r) * var(--r) - var(--spark-dx) * var(--spark-dx))) * 1px
+  );
+  translate: -50% -50%;
+  pointer-events: none;
+}
+}
+
+/* Hero dot field, first paint: a static stand-in for the PatternWaves
+   (WebGL) silk field, banded like its folds. Fades out once WebGL draws. */
+@layer components {
+  .hero-dots {
+    background-image: radial-gradient(circle, oklch(0.56 0.16 256 / 0.5) 1.5px, transparent 1.9px);
+    background-size: 11px 11px;
+    mask-image: repeating-linear-gradient(
+      116deg,
+      transparent 0 5%,
+      black 11% 16%,
+      transparent 23% 33%
+    );
+  }
+}
+
+/* ── Load choreography (CSS, so it starts before hydration) ──────────── */
+@keyframes blur-in {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translate3d(0, 0.32em, 0);
+  }
+  55% {
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes horizon-rise {
+  from {
+    transform: translate3d(0, 9vh, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes sparkle-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.15) rotate(-70deg);
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes streak-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer components {
+.blur-word {
+  display: inline-block;
+  animation: blur-in 1.15s var(--ease-out-expo) both;
+  animation-delay: calc(var(--blur-start, 150ms) + var(--i, 0) * var(--blur-step, 70ms));
+}
+
+.hero-in {
+  animation: fade-up 1s var(--ease-out-expo) both;
+  animation-delay: var(--d, 0ms);
+}
+
+.horizon-rise {
+  animation: horizon-rise 2.2s var(--ease-out-expo) both 60ms;
+}
+
+.sparkle-in {
+  animation: sparkle-in 1.4s var(--ease-out-expo) both 1.15s;
+}
+
+.streak-in {
+  animation: streak-in 1.6s var(--ease-out-expo) both 1.25s;
+}
+}
+
+/* ── Lifecycle arc under reduced motion: show the finished state ─────── */
+@media (prefers-reduced-motion: reduce) {
+  .arc-draw {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+  .arc-node {
+    background-color: var(--color-corona) !important;
+    border-color: var(--color-corona) !important;
+  }
+  .arc-stage {
+    color: var(--color-ink) !important;
+  }
+  .arc-pill {
+    opacity: 1 !important;
+    scale: 1 !important;
+  }
+}
+
+/* ── Global reduced-motion guard ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
